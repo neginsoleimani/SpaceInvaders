@@ -87,7 +87,15 @@ function animate() {
     ctx.fillRect(0, 0, canvas.width, canvas.height)
     player.update()
 
-    projectile.forEach(projectile => {
+    projectile.forEach((projectile , index )=> {
+        if (projectile.position.y + projectile.radius <= 0){
+            setTimeout(()=>{
+                projectile.splice(index ,1)
+            },0)
+        }
+        else{
+            projectile.update()
+        }
         projectile.update()
     })
 
@@ -123,7 +131,7 @@ addEventListener('keydown', ({ key }) => {
                 },
                 velocity: {
                     x: 0,
-                    y: -5
+                    y: -10
                 }
             }))
             keys.space.pressed = true
