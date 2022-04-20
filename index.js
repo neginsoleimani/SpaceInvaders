@@ -1,11 +1,10 @@
 const canvas = document.getElementById("canvas");
 const ctx = canvas.getContext('2d');
-canvas.width = window.innerWidth;
-canvas.height = window.innerHeight;
+canvas.width = innerWidth;
+canvas.height = innerHeight;
 
 class Player {
     constructor() {
-
 
         this.velocity = {
             x: 0,
@@ -29,10 +28,12 @@ class Player {
     }
 
     draw() {
-        // ctx.fillStyle = 'red'
-        // ctx.fillRect(this.position.x,this.position.y,this.width,this.height)
-        ctx.drawImage(this.image, this.position.x, this.position.y, this.width, this.height)
-
+        ctx.drawImage(
+            this.image,
+            this.position.x,
+            this.position.y,
+            this.width,
+            this.height)
     }
 
     update() {
@@ -43,7 +44,30 @@ class Player {
     }
 }
 
+class Projectile {
+    constructor({ position, velocity }) {
+        this.position = position
+        this.velocity = velocity
+        this.radius = 3
+    }
+
+    draw() {
+        ctx.beginPath()
+        ctx.arc(this.position.x, this.position.y, this.radius, 0, Math.PI * 2)
+        ctx.fillStyle = 'blue'
+        ctx.fill()
+        ctx.closePath()
+    }
+
+    update() {
+        this.draw()
+        this.position.x += this.velocity.x
+        this.position.y += this.velocity.y
+    }
+}
+
 const player = new Player()
+const projectile = []
 const keys = {
     a: {
         pressed: false
@@ -54,18 +78,23 @@ const keys = {
     },
     space: {
         pressed: false
-    },
+    }
 }
 
 function animate() {
     requestAnimationFrame(animate)
+    ctx.fillStyle = 'black'
     ctx.fillRect(0, 0, canvas.width, canvas.height)
     player.update()
+
+    projectile.forEach(projectile => {
+        projectile.update()
+    })
 
     if (keys.a.pressed && player.position.x >= 0) {
         player.velocity.x = -7
     }
-    else if (keys.d.pressed && player.position.x + player.width <= canvas.width) {
+    else if (keys.d.pressed && (player.position.x + player.width) <= canvas.width) {
         player.velocity.x = 7
     }
     else {
@@ -87,9 +116,18 @@ addEventListener('keydown', ({ key }) => {
             break;
         case ' ':
             console.log('space')
+            projectile.push(new Projectile({
+                position: {
+                    x: player.position.x+player.width/2,
+                    y: player.position.y
+                },
+                velocity: {
+                    x: 0,
+                    y: -5
+                }
+            }))
             keys.space.pressed = true
             break;
-
     }
 })
 
@@ -108,7 +146,6 @@ addEventListener('keyup', ({ key }) => {
             console.log('space')
             keys.space.pressed = false
             break;
-
     }
 })
 
