@@ -152,7 +152,7 @@ class Grid {
 }
 
 const player = new Player()
-const projectile = []
+const projectiles = []
 const grids = []
 const keys = {
     a: {
@@ -177,10 +177,10 @@ function animate() {
     ctx.fillRect(0, 0, canvas.width, canvas.height)
     player.update()
 
-    projectile.forEach((projectile, index) => {
+    projectiles.forEach((projectile, index) => {
         if (projectile.position.y + projectile.radius <= 0) {
             setTimeout(() => {
-                projectile.splice(index, 1)
+                projectiles.splice(index, 1)
             }, 0)
         }
         else {
@@ -191,8 +191,26 @@ function animate() {
 
     grids.forEach(grid => {
         grid.update()
-        grid.invaders.forEach(invader => {
+        grid.invaders.forEach((invader, i) => {
             invader.update({ velocity: grid.velocity })
+            projectiles.forEach((projectile, j) => {
+                if (projectile.position.y - projectile.radius <= invader.position.y +
+                    invader.height &&
+                    projectile.position.x + projectile.radius >= invader.position.x && projectile.position.x - projectile.radius
+                    <= invader.position.x + invader.width && projectile.position.y + projectile.radius >= invader.position.y) {
+                    setTimeout(() => {
+                        const invaderFound = grid.invaders.find((invader2) =>
+                            invader2 === invader
+                        )
+
+                        const projectileFound = projectiles.find(projectile2 => projectile2 === projectile)
+                        if (invaderFound && projectileFound) {
+                            grid.invaders.splice(i, 1)
+                            projectiles.splice(j, 1)
+                        }
+                    }, 0)
+                }
+            })
         })
     })
 
@@ -209,7 +227,7 @@ function animate() {
     if (frames % randomInterval === 0) {
         grids.push(new Grid())
         randomInterval = Math.floor(Math.random() * 500 + 500)
-        frames=0
+        frames = 0
     }
 
     frames++
@@ -229,7 +247,7 @@ addEventListener('keydown', ({ key }) => {
             break;
         case ' ':
             console.log('space')
-            projectile.push(new Projectile({
+            projectiles.push(new Projectile({
                 position: {
                     x: player.position.x + player.width / 2,
                     y: player.position.y
