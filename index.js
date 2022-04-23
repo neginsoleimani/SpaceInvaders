@@ -1,8 +1,8 @@
 const canvas = document.getElementById("canvas");
 const scoreEl = document.getElementById("scoreEl");
 const ctx = canvas.getContext('2d');
-canvas.width = innerWidth;
-canvas.height = innerHeight;
+canvas.width = 1024;
+canvas.height = 600;
 
 class Player {
     constructor() {
