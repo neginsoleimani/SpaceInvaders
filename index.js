@@ -110,7 +110,7 @@ class InvaderProjectile {
     }
 
     draw() {
-        ctx.fillStyle = 'white'
+        ctx.fillStyle = 'yellow'
         ctx.fillRect(this.position.x, this.position.y, this.width, this.height)
     }
 
